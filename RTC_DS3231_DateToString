@@ -1,3 +1,4 @@
+   
 #include <SPI.h>            //SPI library for the sd breakout board. Part of the Arduino IDE
 #include <SD.h>             //SD library for the sd breakout board. Part of the Arduino IDE
 //#include <DS1307RTC.h>      //RTC Library https://github.com/JChristensen/DS3232RTC
@@ -19,14 +20,29 @@ SDA is a serial data pin for I2C interface.
 
 RTC_DS3231 rtc;
 
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-char this_Day;
-char this_Month;
-char this_Year;
-char this_Hour;
-char this_Minute;
-char this_Second;
-char string_Date;
+// char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+int this_Day;
+int this_Month;
+int this_Year;
+int this_Hour;
+int this_Minute;
+int this_Second;
+
+char char_Day[2];
+char char_Month[2];
+char char_Year[5];
+char char_Hour[2];
+char char_Minute[2];
+char char_Second[2];
+
+String str_Day;
+String str_Month;
+String str_Year;
+String str_Hour;
+String str_Minute;
+String str_Second;
+
+String str_Date;
 
 void setup () 
 {
@@ -57,28 +73,50 @@ void loop ()
     
     Serial.println("Current Date & Time: ");
     Serial.print(now.year(), DEC);
-    this_Year= (now.year(), int);
+    this_Year = now.year();
+    str_Year=String(this_Year);
+    str_Year.toCharArray(char_Year,5);
+
     Serial.print('/');
+    
     Serial.print(now.month(), DEC);
-    this_Month = (now.month(), DEC);
+    this_Month = (now.month());
+    str_Month=String(this_Month);
+    str_Month.toCharArray(char_Month,2);
+    
     Serial.print('/');
+    
     Serial.print(now.day(), DEC);
-    this_Day = (now.day(), DEC);
+    this_Day = (now.day());
+    str_Day=String(this_Day);
+    str_Day.toCharArray(char_Day,2);
+    
     Serial.print(" (");
     Serial.print(daysOfTheWeek[now.dayOfTheWeek()]);
     Serial.print(") ");
+    
     Serial.print(now.hour(), DEC);
-    this_Hour = (now.hour(), DEC);
+    this_Hour = (now.hour());
+    str_Hour=String(this_Hour);
+    str_Hour.toCharArray(char_Hour,2);
+    
     Serial.print(':');
+    
     this_Minute = (now.minute(), DEC);
-    Serial.print(now.minute(), DEC);
+    Serial.print(now.minute());
+    str_Minute=String(this_Minute);
+    str_Minute.toCharArray(char_Minute,2);
+    
     Serial.print(':');
+    
     Serial.print(now.second(), DEC);
-    this_Second = (now.second(), DEC);
+    this_Second = (now.second());
+    str_Second=String(this_Second);
+    str_Second.toCharArray(char_Second,2);
     Serial.println();
-    string_Date = (this_Year + "/" + this_Month);
-    Serial.print(this_Year);
-    Serial.print("    ++++ ");
+    
+
+    Serial.println("    ++++ ");
 /*
     Serial.println("Unix Time: ");
     Serial.print("elapsed ");
@@ -104,6 +142,15 @@ void loop ()
     Serial.print(future.second(), DEC);
     Serial.println();
 */    
+
+    str_Year=String(this_Year);
+    str_Year.toCharArray(char_Year,5);
+    
+    
+    Serial.print(char_Year);
     Serial.println();
+    str_Date = str_Year + '/' + str_Month + '/' + str_Day + " " + str_Hour + ':' + str_Minute + ':' + str_Second;
+    Serial.println("    ++++ ");
+    Serial.print(str_Date);
     delay(1000);
 }
