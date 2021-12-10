@@ -1,0 +1,108 @@
+#include <SPI.h>            //SPI library for the sd breakout board. Part of the Arduino IDE
+#include <SD.h>             //SD library for the sd breakout board. Part of the Arduino IDE
+//#include <DS1307RTC.h>      //RTC Library https://github.com/JChristensen/DS3232RTC
+#include <time.h>
+#include <Wire.h>
+#include "RTClib.h"
+
+/*
+RTC DS3231 
+32K pin outputs the stable(temperature compensated) and accurate reference clock.
+SQW pin outputs a nice square wave at either 1Hz, 4kHz, 8kHz or 32kHz and can be handled programmatically. This can further be used as an interrupt due to alarm condition in many time-based applications.
+SCL is a serial clock pin for I2C interface.
+SDA is a serial data pin for I2C interface.
+
+*/
+
+
+
+
+RTC_DS3231 rtc;
+
+// char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+int this_Day;
+int this_Month;
+int this_Year;
+int this_Hour;
+int this_Minute;
+int this_Second;
+
+char char_Day[2];
+char char_Month[2];
+char char_Year[5];
+char char_Hour[2];
+char char_Minute[2];
+char char_Second[2];
+
+String str_Day;
+String str_Month;
+String str_Year;
+String str_Hour;
+String str_Minute;
+String str_Second;
+
+String str_Date;
+
+void setup () 
+{
+  Serial.begin(9600);
+  delay(3000); // wait for console opening
+
+  if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC");
+    while (1);
+  }
+
+  if (rtc.lostPower()) {
+    Serial.println("RTC lost power, lets set the time!");
+	
+	  // Comment out below lines once you set the date & time.
+    // Following line sets the RTC to the date & time this sketch was compiled
+    rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));
+	
+    // Following line sets the RTC with an explicit date & time
+    // for example to set January 27 2017 at 12:56 you would call:
+    // rtc.adjust(DateTime(2017, 1, 27, 12, 56, 0));
+  }
+}
+
+void loop () 
+{
+    DateTime now = rtc.now();
+    
+    // get the year and convert it to a string
+    this_Year = now.year();
+    str_Year=String(this_Year);
+    str_Year.toCharArray(char_Year,5);
+
+    // get the month and convert it to a string
+    this_Month = (now.month());
+    str_Month=String(this_Month);
+    str_Month.toCharArray(char_Month,2);
+    
+    // get the day and convert it to a string
+    this_Day = (now.day());
+    str_Day=String(this_Day);
+    str_Day.toCharArray(char_Day,2);
+    
+    // get the hour and convert it to a string
+    this_Hour = (now.hour());
+    str_Hour=String(this_Hour);
+    str_Hour.toCharArray(char_Hour,2);
+    
+    // get the minutes and convert it to a string
+    this_Minute = (now.minute(), DEC);
+    str_Minute=String(this_Minute);
+    str_Minute.toCharArray(char_Minute,2);
+    
+    // get the seconds and convert it to a string
+    this_Second = (now.second());
+    str_Second=String(this_Second);
+    str_Second.toCharArray(char_Second,2);
+    
+    // make a string with date and time
+    str_Date = str_Year + '/' + str_Month + '/' + str_Day + " " + str_Hour + ':' + str_Minute + ':' + str_Second;
+    
+    Serial.println(str_Date);
+    delay(1000);
+}
